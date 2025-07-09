@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HotelBook - Otel Rezervasyon</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23e3f2fd" width="1200" height="600"/><rect fill="%23bbdefb" x="0" y="500" width="1200" height="100"/><circle fill="%23ffeb3b" cx="200" cy="100" r="40"/><polygon fill="%2366bb6a" points="0,500 300,400 600,450 900,350 1200,400 1200,600 0,600"/></svg>');
+            background-size: cover;
+            background-position: center;
+            padding: 80px 0;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Search Form */
+        .search-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+            width: 100%;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Filters */
+        .filters {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin: 2rem 0;
+        }
+
+        .filters h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Hotels Grid */
+        .hotels-section {
+            padding: 2rem 0;
+        }
+
+        .hotels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .hotel-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .hotel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .hotel-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .hotel-info {
+            padding: 1.5rem;
+        }
+
+        .hotel-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .hotel-location {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .hotel-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .hotel-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: #ffc107;
+        }
+
+        .hotel-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .book-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .book-btn:hover {
+            background: #5a67d8;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        /* Footer */
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hotels-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">HotelBook</a>
+                <nav>
+                    <ul class="nav-links">
+                        <li><a href="#home">Ana Sayfa</a></li>
+                        <li><a href="#hotels">Oteller</a></li>
+                        <li><a href="#contact">İletişim</a></li>
+                        <li><a href="#account">Hesabım</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Hayalinizdeki Tatili Bulun</h1>
+            <p>Dünya çapında binlerce otel arasından en uygun fiyatlarla rezervasyon yapın</p>
+
+            <div class="search-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="destination">Varış Noktası</label>
+                        <input type="text" id="destination" placeholder="Şehir, otel adı...">
+                    </div>
+                    <div class="form-group">
+                        <label for="checkin">Giriş Tarihi</label>
+                        <input type="date" id="checkin">
+                    </div>
+                    <div class="form-group">
+                        <label for="checkout">Çıkış Tarihi</label>
+                        <input type="date" id="checkout">
+                    </div>
+                    <div class="form-group">
+                        <label for="guests">Misafir Sayısı</label>
+                        <select id="guests">
+                            <option value="1">1 Misafir</option>
+                            <option value="2">2 Misafir</option>
+                            <option value="3">3 Misafir</option>
+                            <option value="4">4 Misafir</option>
+                            <option value="5">5+ Misafir</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="search-btn" onclick="searchHotels()">Otel Ara</button>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="filters">
+            <h3>Filtreler</h3>
+            <div class="filter-grid">
+                <div class="filter-item">
+                    <input type="checkbox" id="wifi">
+                    <label for="wifi">Ücretsiz WiFi</label>
+                </div>
+                <div class="filter-item">
+                    <input type="checkbox" id="pool">
+                    <label for="pool">Havuz</label>
+                </div>
+                <div class="filter-item">
+                    <input type="checkbox" id="spa">
+                    <label for="spa">Spa</label>
+                </div>
+                <div class="filter-item">
+                    <input type="checkbox" id="gym">
+                    <label for="gym">Fitness</label>
+                </div>
+                <div class="filter-item">
+                    <input type="checkbox" id="restaurant">
+                    <label for="restaurant">Restoran</label>
+                </div>
+                <div class="filter-item">
+                    <input type="checkbox" id="parking">
+                    <label for="parking">Otopark</label>
+                </div>
+            </div>
+        </div>
+
+        <section class="hotels-section" id="hotels">
+            <div class="hotels-grid">
+                <div class="hotel-card">
+                    <div class="hotel-image">Grand Palace Hotel</div>
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Grand Palace Hotel</h3>
+                        <p class="hotel-location">📍 İstanbul, Sultanahmet</p>
+                        <div class="hotel-features">
+                            <span class="feature-tag">WiFi</span>
+                            <span class="feature-tag">Havuz</span>
+                            <span class="feature-tag">Spa</span>
+                            <span class="feature-tag">Restoran</span>
+                        </div>
+                        <div class="hotel-rating">
+                            <div class="stars">⭐⭐⭐⭐⭐</div>
+                            <span>(4.8)</span>
+                        </div>
+                        <div class="hotel-price">
+                            <span class="price">₺850/gece</span>
+                            <button class="book-btn"
+                                onclick="openBookingModal('Grand Palace Hotel')">Rezervasyon</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hotel-card">
+                    <div class="hotel-image">Seaside Resort</div>
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Seaside Resort</h3>
+                        <p class="hotel-location">📍 Antalya, Kemer</p>
+                        <div class="hotel-features">
+                            <span class="feature-tag">WiFi</span>
+                            <span class="feature-tag">Havuz</span>
+                            <span class="feature-tag">Plaj</span>
+                            <span class="feature-tag">All Inclusive</span>
+                        </div>
+                        <div class="hotel-rating">
+                            <div class="stars">⭐⭐⭐⭐</div>
+                            <span>(4.5)</span>
+                        </div>
+                        <div class="hotel-price">
+                            <span class="price">₺1,200/gece</span>
+                            <button class="book-btn" onclick="openBookingModal('Seaside Resort')">Rezervasyon</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hotel-card">
+                    <div class="hotel-image">Mountain View Lodge</div>
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Mountain View Lodge</h3>
+                        <p class="hotel-location">📍 Kapadokya, Göreme</p>
+                        <div class="hotel-features">
+                            <span class="feature-tag">WiFi</span>
+                            <span class="feature-tag">Kahvaltı</span>
+                            <span class="feature-tag">Terras</span>
+                            <span class="feature-tag">Manzara</span>
+                        </div>
+                        <div class="hotel-rating">
+                            <div class="stars">⭐⭐⭐⭐⭐</div>
+                            <span>(4.9)</span>
+                        </div>
+                        <div class="hotel-price">
+                            <span class="price">₺650/gece</span>
+                            <button class="book-btn"
+                                onclick="openBookingModal('Mountain View Lodge')">Rezervasyon</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hotel-card">
+                    <div class="hotel-image">City Center Hotel</div>
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">City Center Hotel</h3>
+                        <p class="hotel-location">📍 Ankara, Kızılay</p>
+                        <div class="hotel-features">
+                            <span class="feature-tag">WiFi</span>
+                            <span class="feature-tag">Fitness</span>
+                            <span class="feature-tag">Restoran</span>
+                            <span class="feature-tag">Otopark</span>
+                        </div>
+                        <div class="hotel-rating">
+                            <div class="stars">⭐⭐⭐⭐</div>
+                            <span>(4.3)</span>
+                        </div>
+                        <div class="hotel-price">
+                            <span class="price">₺450/gece</span>
+                            <button class="book-btn"
+                                onclick="openBookingModal('City Center Hotel')">Rezervasyon</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hotel-card">
+                    <div class="hotel-image">Luxury Beach Resort</div>
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Luxury Beach Resort</h3>
+                        <p class="hotel-location">📍 Bodrum, Yalıkavak</p>
+                        <div class="hotel-features">
+                            <span class="feature-tag">WiFi</span>
+                            <span class="feature-tag">Havuz</span>
+                            <span class="feature-tag">Spa</span>
+                            <span class="feature-tag">Plaj</span>
+                        </div>
+                        <div class="hotel-rating">
+                            <div class="stars">⭐⭐⭐⭐⭐</div>
+                            <span>(4.7)</span>
+                        </div>
+                        <div class="hotel-price">
+                            <span class="price">₺1,500/gece</span>
+                            <button class="book-btn"
+                                onclick="openBookingModal('Luxury Beach Resort')">Rezervasyon</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hotel-card">
+                    <div class="hotel-image">Business Hotel</div>
+                    <div class="hotel-info">
+                        <h3 class="hotel-name">Business Hotel</h3>
+                        <p class="hotel-location">📍 İzmir, Alsancak</p>
+                        <div class="hotel-features">
+                            <span class="feature-tag">WiFi</span>
+                            <span class="feature-tag">Toplantı</span>
+                            <span class="feature-tag">Restoran</span>
+                            <span class="feature-tag">Otopark</span>
+                        </div>
+                        <div class="hotel-rating">
+                            <div class="stars">⭐⭐⭐⭐</div>
+                            <span>(4.2)</span>
+                        </div>
+                        <div class="hotel-price">
+                            <span class="price">₺380/gece</span>
+                            <button class="book-btn" onclick="openBookingModal('Business Hotel')">Rezervasyon</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBookingModal()">&times;</span>
+            <h2>Rezervasyon Yap</h2>
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label for="hotelName">Otel</label>
+                    <input type="text" id="hotelName" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="guestName">Ad Soyad</label>
+                    <input type="text" id="guestName" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-posta</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Telefon</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="checkInDate">Giriş Tarihi</label>
+                        <input type="date" id="checkInDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="checkOutDate">Çıkış Tarihi</label>
+                        <input type="date" id="checkOutDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="roomType">Oda Tipi</label>
+                    <select id="roomType" required>
+                        <option value="">Seçiniz</option>
+                        <option value="single">Tek Kişilik</option>
+                        <option value="double">Çift Kişilik</option>
+                        <option value="suite">Suit</option>
+                    </select>
+                </div>
+                <button type="submit" class="search-btn">Rezervasyon Tamamla</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 HotelBook. Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Set default dates
+        document.addEventListener('DOMContentLoaded', function () {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            document.getElementById('checkin').value = today.toISOString().split('T')[0];
+            document.getElementById('checkout').value = tomorrow.toISOString().split('T')[0];
+            document.getElementById('checkInDate').value = today.toISOString().split('T')[0];
+            document.getElementById('checkOutDate').value = tomorrow.toISOString().split('T')[0];
+        });
+
+        function searchHotels() {
+            const destination = document.getElementById('destination').value;
+            const checkin = document.getElementById('checkin').value;
+            const checkout = document.getElementById('checkout').value;
+            const guests = document.getElementById('guests').value;
+
+            if (!destination || !checkin || !checkout) {
+                alert('Lütfen tüm alanları doldurun.');
+                return;
+            }
+
+            // Simulate search animation
+            const searchBtn = document.querySelector('.search-btn');
+            searchBtn.innerHTML = 'Aranıyor...';
+            searchBtn.disabled = true;
+
+            setTimeout(() => {
+                searchBtn.innerHTML = 'Otel Ara';
+                searchBtn.disabled = false;
+                document.getElementById('hotels').scrollIntoView({ behavior: 'smooth' });
+            }, 1500);
+        }
+
+        function openBookingModal(hotelName) {
+            document.getElementById('hotelName').value = hotelName;
+            document.getElementById('bookingModal').style.display = 'block';
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            const modal = document.getElementById('bookingModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Form submission
+        document.getElementById('bookingForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const bookingData = Object.fromEntries(formData.entries());
+
+            // Simulate booking process
+            alert('Rezervasyonunuz alındı! Onay e-postası gönderilecektir.');
+            closeBookingModal();
+            this.reset();
+        });
+
+        // Filter functionality
+        document.querySelectorAll('.filter-item input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                // Simulate filtering
+                const cards = document.querySelectorAll('.hotel-card');
+                cards.forEach(card => {
+                    card.style.opacity = this.checked ? '0.7' : '1';
+                });
+
+                setTimeout(() => {
+                    cards.forEach(card => {
+                        card.style.opacity = '1';
+                    });
+                }, 300);
+            });
+        });
+    </script>
+</body>
+
+</html>
